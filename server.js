@@ -1,21 +1,14 @@
 require('dotenv').config();
 const express = require('express');
-const path = require('path');
-const routes = require('./routes');
+const routes = require('./routes/routes');
 const InitiateMongoServer = require('./config/db');
+
+const app = express();
 
 //Initiate Mongo Server
 InitiateMongoServer();
 
-//Express app initialization
-const app = express();
-
-// Template engine configuration
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-
-//Express configuration
-app.use(express.static(path.join(__dirname, 'public')));
+//Express Configuration
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -23,16 +16,8 @@ app.use(express.json());
 const hostname = process.env.HOST;
 const port = process.env.PORT;
 
-app.use('/api/user', routes());
-app.get('/', (req, res) => {
-  res.status(200).json({
-    message: 'Welcome to Simple Registration and Login Api!!!',
-    HowToUse: 'Nnavigate to http://localhost:3000/api/user/register  to register',
-    HowToUSe2: 'A veification email will be sent to your email, please activate',
-    HowToUSe3:
-      'Finally navigate to http://localhost:3000/api/user/login to login. Feel free to use code in your application',
-  });
-});
+//Routes
+routes(app);
 
 // Start a TCP server listening for connections on the given port and host
 app.listen(port, hostname, () => {

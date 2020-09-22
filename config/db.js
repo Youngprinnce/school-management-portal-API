@@ -1,8 +1,5 @@
-const dotenv = require('dotenv').config();
-const dsn = process.env.DB_USER;
 const mongoose = require('mongoose');
-
-mongoose.Promise = mongoose.Promise;
+const dsn = process.env.DB_USER;
 
 const InitiateMongoServer = async () => {
   try {
@@ -10,6 +7,7 @@ const InitiateMongoServer = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
+      useFindAndModify: false,
     });
     console.log('Connected to DB');
   } catch (err) {
@@ -17,5 +15,7 @@ const InitiateMongoServer = async () => {
     throw err;
   }
 };
+
+InitiateMongoServer();
 
 module.exports = InitiateMongoServer;
