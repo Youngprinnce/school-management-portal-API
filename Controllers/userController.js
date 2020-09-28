@@ -60,7 +60,7 @@ const regController = async (req, res) => {
   await mg.messages().send(data, (err, body) => {
     if (err) {
       const message = 'Error! Try again';
-      return sendError(res, [err], message);
+      return sendError(res, err, message);
     } else {
       const message = `Verification token has been sent to ${email}`;
       return sendSuccess(res, [], message);
@@ -97,8 +97,11 @@ const loginController = async (req, res) => {
     return sendError(res, [], message);
   }
 
+  //Create Token for frontend Authentication
+  const token = jwt.sign({ _id: user._id }, process.env.LOGIN_TOKEN);
+
   const message = 'Login Successful';
-  return sendSuccess(res, [user], message);
+  return sendSuccess(res, { user, token }, message);
 };
 
 const activationController = async (req, res) => {
@@ -187,7 +190,7 @@ const forgotPasswordController = async (req, res) => {
     return sendSuccess(res, [], message);
   } catch (error) {
     const message = 'reset password link error';
-    return sendError(res, [err], message);
+    return sendError(res, err, message);
   }
 };
 
@@ -215,7 +218,7 @@ const resetPasswordController = async (req, res) => {
   const user = await User.findOne({ resetLink: token });
   if (!user) {
     const message = 'User with this token does not exist';
-    return sendError(res, [err], message);
+    return sendError(res, err, message);
   }
 
   //HASH USER PASSWORD USING BCRYPT
