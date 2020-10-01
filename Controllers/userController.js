@@ -5,7 +5,7 @@ const { sendSuccess, sendError } = require('../utils/responseHandler');
 const uniqueToken = require('../utils/tokenGenerator');
 const sendMail = require('../utils/emailService');
 
-const registerUser = async (req, res) => {
+const register = async (req, res) => {
   // VALIDATE USER BEFORE SAVE
   const { error, value } = await User.regValidations(req.body);
   if (error) {
@@ -58,7 +58,7 @@ const registerUser = async (req, res) => {
   });
 };
 
-const loginUser = async (req, res) => {
+const login = async (req, res) => {
   // VALIDATE USER BEFORE SAVE
   const { error, value } = await User.loginValidations(req.body);
   if (error) {
@@ -94,7 +94,7 @@ const loginUser = async (req, res) => {
   return sendSuccess(res, { user, token }, message);
 };
 
-const activateUser = async (req, res) => {
+const activate = async (req, res) => {
   //Retrive token from user
   const token = req.body.token;
 
@@ -128,7 +128,7 @@ const activateUser = async (req, res) => {
   return sendSuccess(res, [], message);
 };
 
-const userForgotPassword = async (req, res) => {
+const forgotPassword = async (req, res) => {
   const { email } = req.body;
 
   //CHECK IF EMAIL EXIST IN THE DATABASE
@@ -175,7 +175,7 @@ const userForgotPassword = async (req, res) => {
   });
 };
 
-const resetUserPassword = async (req, res) => {
+const resetPassword = async (req, res) => {
   //Retrive token from URL
   const token = req.params.token;
   const password = req.body.password;
@@ -216,9 +216,9 @@ const resetUserPassword = async (req, res) => {
 };
 
 module.exports = {
-  registerUser,
-  loginUser,
-  activateUser,
-  userForgotPassword,
-  resetUserPassword,
+  register,
+  login,
+  activate,
+  forgotPassword,
+  resetPassword,
 };
