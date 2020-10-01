@@ -2,18 +2,18 @@ const express = require('express');
 const router = express.Router();
 
 const {
-  activationController,
-  regController,
-  loginController,
-  forgotPasswordController,
-  resetPasswordController,
+  registerUser,
+  loginUser,
+  activateUser,
+  userForgotPassword,
+  resetUserPassword,
 } = require('../Controllers/userController');
 
 module.exports = () => {
-  router.post('/register', regController);
-  router.put('/login', loginController);
-  router.get('/activation', activationController);
-  router.put('/forgot-password', forgotPasswordController);
-  router.put('/resetpassword/:token', resetPasswordController);
+  router.post('/register', registerUser);
+  router.put('/login', loginUser);
+  router.get('/activation', activateUser);
+  router.put('/forgot-password', userForgotPassword);
+  router.put('/resetpassword/:token', resetUserPassword);
   return router;
 };

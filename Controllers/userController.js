@@ -1,11 +1,11 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
-const mailgun = require('mailgun-js');
 const { sendSuccess, sendError } = require('../utils/responseHandler');
 const uniqueToken = require('../utils/tokenGenerator');
+const sendMail = require('../utils/emailService');
 
-const regController = async (req, res) => {
+const registerUser = async (req, res) => {
   // VALIDATE USER BEFORE SAVE
   const { error, value } = await User.regValidations(req.body);
   if (error) {
@@ -36,6 +36,7 @@ const regController = async (req, res) => {
       <p>All The Best</p>
     </div>
     `;
+  const subject = 'Verification Token';
 
   //Save new user to database
   const user = new User({ ...value, token });
@@ -45,19 +46,8 @@ const regController = async (req, res) => {
     return sendError(res, [], message);
   }
 
-  //EMAIL CONFIGURATION
-  const mg = await mailgun({
-    apiKey: process.env.MAILGUN_API_KEY,
-    domain: process.env.MAILGUN_DOMAIN,
-  });
-  const data = {
-    from: '"youngprinnce 👻" <' + process.env.EMAIL_ADDRESS + '>', // sender address
-    to: `${email}`, // list of receivers
-    subject: 'Verification Token ✔', // Subject line
-    text: 'hello', // plain text body
-    html: link,
-  };
-  await mg.messages().send(data, (err, body) => {
+  //SEND EMAIL
+  await sendMail(email, subject, link, (err, data) => {
     if (err) {
       const message = 'Error! Try again';
       return sendError(res, err, message);
@@ -68,7 +58,7 @@ const regController = async (req, res) => {
   });
 };
 
-const loginController = async (req, res) => {
+const loginUser = async (req, res) => {
   // VALIDATE USER BEFORE SAVE
   const { error, value } = await User.loginValidations(req.body);
   if (error) {
@@ -104,7 +94,7 @@ const loginController = async (req, res) => {
   return sendSuccess(res, { user, token }, message);
 };
 
-const activationController = async (req, res) => {
+const activateUser = async (req, res) => {
   //Retrive token from user
   const token = req.body.token;
 
@@ -138,7 +128,7 @@ const activationController = async (req, res) => {
   return sendSuccess(res, [], message);
 };
 
-const forgotPasswordController = async (req, res) => {
+const userForgotPassword = async (req, res) => {
   const { email } = req.body;
 
   //CHECK IF EMAIL EXIST IN THE DATABASE
@@ -164,20 +154,9 @@ const forgotPasswordController = async (req, res) => {
     </div>
     `;
 
-  //EMAIL CONFIGURATION
-  const mg = await mailgun({
-    apiKey: process.env.MAILGUN_API_KEY,
-    domain: process.env.MAILGUN_DOMAIN,
-  });
+  const subject = 'Password rest Link ✔';
 
-  const data = {
-    from: '"youngprinnce 👻" <' + process.env.EMAIL_ADDRESS + '>', // sender address
-    to: `${email}`, // list of receivers
-    subject: 'Password rest Link ✔', // Subject line
-    text: 'hello',
-    html: link, // plain text body
-  };
-
+  //SEND EMAIL
   const resetLink = await User.updateOne({ resetLink: token });
   if (!resetLink) {
     const message = 'reset password link error';
@@ -185,7 +164,7 @@ const forgotPasswordController = async (req, res) => {
   }
 
   try {
-    await mg.messages().send(data);
+    await sendMail(email, subject, link);
     const message = `Password reset link has been sent to ${email}`;
     return sendSuccess(res, [], message);
   } catch (error) {
@@ -194,18 +173,13 @@ const forgotPasswordController = async (req, res) => {
   }
 };
 
-const resetPasswordController = async (req, res) => {
+const resetUserPassword = async (req, res) => {
   //Retrive token from URL
   const token = req.params.token;
   const password = req.body.password;
 
   //Verify token
   const verified = await jwt.verify(token, process.env.FORGOT_PASSWORD_TOKEN);
-  if (!verified) {
-    const message = 'Incorrect or Expired Link! Register Again';
-    return sendError(res, [], message);
-  }
-
   if (!verified) {
     const message = 'Incorrect or Expired Link! Register Again';
     return sendError(res, [], message);
@@ -240,9 +214,9 @@ const resetPasswordController = async (req, res) => {
 };
 
 module.exports = {
-  regController,
-  loginController,
-  activationController,
-  forgotPasswordController,
-  resetPasswordController,
+  registerUser,
+  loginUser,
+  activateUser,
+  userForgotPassword,
+  resetUserPassword,
 };

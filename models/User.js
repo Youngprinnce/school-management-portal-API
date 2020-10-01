@@ -26,6 +26,7 @@ const UserSchema = new Schema({
   },
   username: {
     type: String,
+    unique: true,
     maxlength: 30,
     trim: true,
   },
@@ -53,7 +54,7 @@ const UserSchema = new Schema({
     default: false,
   },
   resetLink: {
-    data: String,
+    type: String,
     default: '',
   },
 });
