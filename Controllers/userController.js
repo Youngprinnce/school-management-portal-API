@@ -94,7 +94,7 @@ const login = async (req, res) => {
   return sendSuccess(res, { user, token }, message);
 };
 
-const activate = async (req, res) => {
+const verify = async (req, res) => {
   //Retrive token from user
   const token = req.body.token;
 
@@ -218,7 +218,7 @@ const resetPassword = async (req, res) => {
 module.exports = {
   register,
   login,
-  activate,
+  verify,
   forgotPassword,
   resetPassword,
 };
