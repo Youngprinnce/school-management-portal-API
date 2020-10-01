@@ -53,7 +53,7 @@ const registerUser = async (req, res) => {
       return sendError(res, err, message);
     } else {
       const message = `Verification token has been sent to ${email}`;
-      return sendSuccess(res, [], message);
+      return sendSuccess(res, data, message);
     }
   });
 };
@@ -152,25 +152,27 @@ const userForgotPassword = async (req, res) => {
 
       <p>All The Best</p>
     </div>
-    `;
+  `;
 
   const subject = 'Password rest Link ✔';
 
-  //SEND EMAIL
+  //UPDATE USER ACCOUNT WITH PSSWORD RESET LINK
   const resetLink = await User.updateOne({ resetLink: token });
   if (!resetLink) {
     const message = 'reset password link error';
     return sendError(res, [], message);
   }
 
-  try {
-    await sendMail(email, subject, link);
-    const message = `Password reset link has been sent to ${email}`;
-    return sendSuccess(res, [], message);
-  } catch (error) {
-    const message = 'reset password link error';
-    return sendError(res, err, message);
-  }
+  //SEND EMAIL
+  await sendMail(email, subject, link, (err, data) => {
+    if (err) {
+      const message = 'reset password link error';
+      return sendError(res, err, message);
+    } else {
+      const message = `Password reset link has been sent to ${email}`;
+      return sendSuccess(res, data, message);
+    }
+  });
 };
 
 const resetUserPassword = async (req, res) => {

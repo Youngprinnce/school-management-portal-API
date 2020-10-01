@@ -6,9 +6,9 @@ const sendMail = async (email, subject, message, cb) => {
     domain: process.env.MAILGUN_DOMAIN,
   });
   const data = {
-    from: '<' + process.env.EMAIL_ADDRESS + '>', // sender address
-    to: `${email}`, // list of receivers
-    subject: subject, // Subject line
+    from: '<' + process.env.EMAIL_ADDRESS + '>',
+    to: `${email}`,
+    subject: subject,
     html: message,
   };
   await mg.messages().send(data, (err, data) => {
