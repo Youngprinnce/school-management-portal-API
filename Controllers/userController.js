@@ -88,10 +88,10 @@ const login = async (req, res) => {
   }
 
   //Create Token for frontend Authentication
-  const token = jwt.sign({ _id: user._id }, process.env.LOGIN_TOKEN);
+  const token = jwt.sign({ user }, process.env.LOGIN_TOKEN);
 
   const message = 'Login Successful';
-  return sendSuccess(res, { user, token }, message);
+  res.header('auth-token', token).json({ user, token, message });
 };
 
 const verify = async (req, res) => {
@@ -215,10 +215,32 @@ const resetPassword = async (req, res) => {
   return sendSuccess(res, [], message);
 };
 
+const deleteOne = async (req, res) => {
+  await User.findByIdAndRemove(req.params.userId, (err, data) => {
+    if (err) {
+      return sendError(res, err);
+    } else {
+      const message = 'User deleted successfully!';
+      return sendSuccess(res, [], message);
+    }
+  });
+};
+
+const getAll = async (req, res) => {
+  await User.find({"role":{"$ne":"admin"}},(err, data) => {
+    if (err) {
+      sendError(res, err);
+    }
+    sendSuccess(res, data)
+  });
+}
+
 module.exports = {
   register,
   login,
   verify,
   forgotPassword,
   resetPassword,
+  deleteOne,
+  getAll,
 };

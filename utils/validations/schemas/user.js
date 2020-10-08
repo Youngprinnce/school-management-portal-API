@@ -11,6 +11,7 @@ const registrationSchema = joi.object().keys({
   last_name: joi.string().required().alphanum().min(5).max(30).trim().label('last_name'),
   username: joi.string().alphanum().min(5).max(30).trim().label('username'),
   age: joi.number().required().label('age'),
+  role: joi.string().label('role').valid('admin', 'student', 'staff'),
   gender: joi.string().trim().valid('male', 'female'),
   password: joi
     .string()
