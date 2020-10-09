@@ -2,13 +2,13 @@ const Session = require('../models/Session');
 const { sendSuccess, sendError } = require('../utils/responseHandler');
 
 const create = (req, res) => {
-  const session = req.body.session;
-  if (!session) {
-    const message = 'Session details cannot be empty';
+  const {start, end, year} = req.body;
+  if (!start || !end || !year) {
+    const message = 'All field required';
     return sendError(res, [], message);
   }
 
-  Session.create({ session }, (err, data) => {
+  Session.create({ start, end, year }, (err, data) => {
     if (err) {
       sendError(res, err);
     } else {
@@ -29,8 +29,8 @@ const getAll = (req, res) => {
 };
 
 const updateOne = (req, res) => {
-  if (!req.body.session) {
-    const message = 'Session details cannot be empty';
+  if (!req.body) {
+    const message = 'Updated field cannot be empty';
     return sendError(res, [], message);
   }
 

@@ -88,7 +88,7 @@ const login = async (req, res) => {
   }
 
   //Create Token for frontend Authentication
-  const token = jwt.sign({ user }, process.env.LOGIN_TOKEN);
+  const token = jwt.sign({ user }, process.env.LOGIN_TOKEN, {expiresIn:"1d"});
 
   const message = 'Login Successful';
   res.header('auth-token', token).json({ user, token, message });

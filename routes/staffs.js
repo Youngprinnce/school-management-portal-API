@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { checkLoggedIn, checkRole , dualRole} = require('../middlewares/auth');
+const {checkRole, checkLoggedIn, dualRole } = require('../middlewares/auth');
 
 const {
   getOne,
@@ -11,7 +11,7 @@ const {
 } = require('../Controllers/staffController');
 
 module.exports = () => {
-  router.get("/:staffId",checkLoggedIn, dualRole,  getOne)
+  router.get("/:staffId", checkLoggedIn, dualRole,  getOne)
   router.get('/', checkLoggedIn, checkRole, getAll);
   router.put('/:staffId', checkLoggedIn, dualRole, updateOne);
   router.delete('/:staffId', checkLoggedIn, checkRole, deleteOne);

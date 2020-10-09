@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const FacultySchema = new Schema({
   name: {
     type: String,
+    required:true
   },
 });
 

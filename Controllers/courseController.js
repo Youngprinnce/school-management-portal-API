@@ -2,15 +2,16 @@ const Course = require('../models/Course');
 const { sendSuccess, sendError } = require('../utils/responseHandler');
 
 const create = (req, res) => {
-  const name = req.body.name;
-  if (!name) {
-    const message = 'Course name cannot be empty';
+  const { name, code, unit } = req.body;
+  if (!name || !code || !unit) {
+    const message = 'All feilds are required';
     return sendError(res, [], message);
   }
 
-  Course.create({ name }, (err, data) => {
+  Course.create({ name, code, unit }, (err, data) => {
     if (err) {
-      sendError(res, err);
+       const message = 'Error! Try again';
+      sendError(res, err, message);
     } else {
       const message = 'Course created successfully';
       sendSuccess(res, data, message);
@@ -29,8 +30,8 @@ const getAll = (req, res) => {
 };
 
 const updateOne = (req, res) => {
-  if (!req.body.name) {
-    const message = 'Course name cannot be empty';
+  if (!req.body) {
+    const message = 'Updated field requires a value';
     return sendError(res, [], message);
   }
 
