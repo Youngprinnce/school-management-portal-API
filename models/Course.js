@@ -13,6 +13,10 @@ const CourseSchema = new Schema({
   unit: {
     type: Number,
     required:true
+  },
+  department: {
+    type: Schema.Types.ObjectId,
+    ref:"Department"
   }
 });
 

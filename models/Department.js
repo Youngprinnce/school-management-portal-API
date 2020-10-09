@@ -6,6 +6,14 @@ const DepartmentSchema = new Schema({
     type: String,
     required:true
   },
+  course: [{
+    type: Schema.Types.ObjectId,
+    ref:"Course"
+  }],
+  faculty: {
+    type: Schema.Types.ObjectId,
+    ref:"Faculty"
+  }
 });
 
 module.exports = mongoose.model('Department', DepartmentSchema);

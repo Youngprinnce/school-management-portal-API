@@ -8,7 +8,7 @@ const create = (req, res) => {
     return sendError(res, [], message);
   }
 
-  Course.create({ name, code, unit }, (err, data) => {
+  Course.create( req.body , (err, data) => {
     if (err) {
        const message = 'Error! Try again';
       sendError(res, err, message);
