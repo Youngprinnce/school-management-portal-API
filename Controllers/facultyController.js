@@ -2,12 +2,13 @@ const Faculty = require('../models/Faculty');
 const { sendSuccess, sendError } = require('../utils/responseHandler');
 
 const create = (req, res) => {
-  if (!req.body) {
-    const message = 'Faculty details cannot be empty';
+  const {name} = req.body
+  if (!name) {
+    const message = 'Faculty name is required';
     return sendError(res, [], message);
   }
 
-  Faculty.create(req.body , (err, data) => {
+  Faculty.create({name} , (err, data) => {
     if (err) {
       sendError(res, err);
     } else {

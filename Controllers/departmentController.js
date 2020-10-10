@@ -2,7 +2,7 @@ const Department = require('../models/Department');
 const { sendSuccess, sendError } = require('../utils/responseHandler');
 
 const create = (req, res) => {
-  if (!req.body) {
+  if (!req.body.name) {
     const message = 'Department details cannot be empty';
     return sendError(res, [], message);
   }
