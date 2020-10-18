@@ -29,6 +29,7 @@ const UserSchema = new Schema({
     unique: true,
     maxlength: 30,
     trim: true,
+    default:"",
   },
   password: {
     type: String,
@@ -40,6 +41,34 @@ const UserSchema = new Schema({
     type: Number,
     required: true,
     trim: true,
+  },
+  dob: {
+    type: String,
+  },
+  status: {
+    type: String,
+    default: "single",
+    enum:["single", "married", "divorced"],
+  },
+  staff_id: {
+    type: String,
+    required:true,
+  },
+  staff_level: {
+    type:Number,
+  },
+  qualification: {
+    type: String,
+    trim:true
+  },
+  staff_department: {
+    type: Schema.Types.ObjectId,
+    ref:"Department"
+  },
+   middle_name: {
+     type: String,
+     trim: true,
+     maxlength:30
   },
   gender: {
     type: String,

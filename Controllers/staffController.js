@@ -1,9 +1,36 @@
 const User = require('../models/User');
+const Department = require('../models/Department');
+const uniqueToken = require('../utils/tokenGenerator');
 const { sendSuccess, sendError } = require('../utils/responseHandler');
 
+const create = async (req, res) =>{
+  //CHECK FOR EMPTY STAFF DETAILS
+  const {staff_department} = req.body
+  if (!req.body) {
+    const message = "Staff details cannot be empty"
+    sendError(res,[], message)
+  }
+
+  //CREATE NEW STAFF ID
+  const staff_id = "stf" + uniqueToken();
+
+  //ATTACH DEPARTMENT TO STAFF
+  const department = await Department.findOne({name:staff_department})
+
+  //SAVE NEW STAFF TO DB
+  const staff = new User({...req.body, staff_id, staff_department: department });
+  const newStaff = await staff.save();
+  if (!newStaff) {
+    const message = 'Error! Try again';
+    return sendError(res, [], message);
+  }
+
+  const message = "Staff successfully registered"
+  sendSuccess(res,[], message)
+}
 
 const getAll = (req, res) => {
-  User.find({role:"staff"},(err, data) => {
+  User.find({role:"staff"}).populate("staff_department", "name -_id").exec((err, data) => {
     if (err) {
       sendError(res, err);
     } else {
@@ -50,6 +77,7 @@ const deleteOne = (req, res) => {
 };
 
 module.exports = {
+  create,
   getOne,
   getAll,
   updateOne,

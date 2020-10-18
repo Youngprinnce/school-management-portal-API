@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const {checkRole, checkLoggedIn, dualRole } = require('../middlewares/auth');
-
 const {
+  create,
   getOne,
   getAll,
   updateOne,
@@ -11,9 +10,10 @@ const {
 } = require('../Controllers/staffController');
 
 module.exports = () => {
-  router.get("/:staffId", checkLoggedIn, dualRole,  getOne)
-  router.get('/', checkLoggedIn, checkRole, getAll);
-  router.put('/:staffId', checkLoggedIn, dualRole, updateOne);
-  router.delete('/:staffId', checkLoggedIn, checkRole, deleteOne);
+  router.post("/", create)
+  router.get("/:staffId",getOne)
+  router.get('/', getAll);
+  router.put('/:staffId',updateOne);
+  router.delete('/:staffId',deleteOne);
   return router;
 };
