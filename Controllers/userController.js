@@ -13,7 +13,7 @@ const register = async (req, res) => {
   }
 
   //Destructure filtered value...
-  const { username, email } = value;
+  const { email } = value;
 
   //CHECK IF EMAIL EXIST IN THE DATABASE
   const emailExist = await User.findOne({ email });
@@ -22,13 +22,11 @@ const register = async (req, res) => {
     return sendError(res, [], message);
   }
 
-  // CREATE AND ASSIGN A TOKEN
+  // CREATE TOKEN
   const token = uniqueToken();
 
   // CREATE EMAIL VERICATION MESSAGE
   const link = `<div>
-      <p>Hey ${username}
-
       <p>Verification Token</p>
 
       <h3>${token}</h3>
@@ -38,8 +36,8 @@ const register = async (req, res) => {
     `;
   const subject = 'Verification Token';
 
-  //Save new user to database
-  const user = new User({ ...value, token });
+  //Save new student to database
+  const user = new User({ ...value, token});
   const newUser = await user.save();
   if (!newUser) {
     const message = 'Error! Try again';
@@ -138,62 +136,38 @@ const forgotPassword = async (req, res) => {
     return sendError(res, [], message);
   }
 
-  // CREATE AND ASSIGN A TOKEN
-  const token = jwt.sign({ _id: user._id }, process.env.FORGOT_PASSWORD_TOKEN, {
-    expiresIn: '20m',
-  });
+  // CREATE A TOKEN
+  const token = uniqueToken();
 
-  // CREATE EMAIL PASSWORD RESET MESSAGE
-  const link = `<div>
-
-      <p>Click this link to reset password</>
-
-      <p>${process.env.CLIENT_URL}/api/resetpassword/${token}</p>
-
-      <p>All The Best</p>
-    </div>
-  `;
-
-  const subject = 'Password rest Link ✔';
-
-  //UPDATE USER ACCOUNT WITH PSSWORD RESET LINK
-  const resetLink = await User.updateOne({ resetLink: token });
-  if (!resetLink) {
-    const message = 'reset password link error';
+  //UPDATE USER ACCOUNT WITH PASSWORD TOKEN
+  const updateToken = await User.findOneAndUpdate({ email }, {token});
+  if (!updateToken) {
+    const message = 'Internal Error, Try again';
     return sendError(res, [], message);
   }
 
-  //SEND EMAIL
-  await sendMail(email, subject, link, (err, data) => {
+  // SEND TOKEN TO USER
+  await sendMail(email, "Token", token, (err, data) => {
     if (err) {
       const message = 'reset password link error';
       return sendError(res, err, message);
     } else {
-      const message = `Password reset link has been sent to ${email}`;
+      const message = `A token has been sent to ${email}`;
       return sendSuccess(res, data, message);
     }
   });
 };
 
+
 const resetPassword = async (req, res) => {
   //Retrive token from URL
-  const token = req.params.token;
+  const token = req.body.token;
   const password = req.body.password;
 
-  //Verify token
-  const verified = await jwt.verify(token, process.env.FORGOT_PASSWORD_TOKEN);
-  if (!verified) {
-    const message = 'Incorrect or Expired Link! Register Again';
-    return sendError(res, [], message);
-  }
-
-  //Destructure user data from...
-  const { _id } = verified;
-
   //Check user with token
-  const user = await User.findOne({ resetLink: token });
+  const user = await User.findOne({ token });
   if (!user) {
-    const message = 'User with this token does not exist';
+    const message = 'Token is not correct';
     return sendError(res, err, message);
   }
 
@@ -202,10 +176,7 @@ const resetPassword = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, salt);
 
   //Update Password
-  const updatePassword = await User.findByIdAndUpdate(
-    { _id },
-    { password: hashedPassword, resetLink: '' }
-  );
+  const updatePassword = await User.findOneAndUpdate({ token },{ password: hashedPassword, token: '' });
   if (!updatePassword) {
     const message = 'Error reseting password';
     return sendError(res, [], message);

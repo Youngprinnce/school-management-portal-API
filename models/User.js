@@ -4,6 +4,11 @@ const { loginSchema, registrationSchema } = require('../utils/validations/schema
 const SALT_WORK_FACTOR = 10;
 const Schema = mongoose.Schema;
 
+const baseOptions = {
+  discriminatorKey: 'usertype',
+  collection: 'users',
+};
+
 const UserSchema = new Schema({
   first_name: {
     type: String,
@@ -24,51 +29,11 @@ const UserSchema = new Schema({
     unique: true,
     required: [true, 'Email is required'],
   },
-  username: {
-    type: String,
-    unique: true,
-    maxlength: 30,
-    trim: true,
-    default:"",
-  },
   password: {
     type: String,
     required: true,
     trim: true,
     minlength: 8,
-  },
-  age: {
-    type: Number,
-    required: true,
-    trim: true,
-  },
-  dob: {
-    type: String,
-  },
-  status: {
-    type: String,
-    default: "single",
-    enum:["single", "married", "divorced"],
-  },
-  staff_id: {
-    type: String,
-    required:true,
-  },
-  staff_level: {
-    type:Number,
-  },
-  qualification: {
-    type: String,
-    trim:true
-  },
-  staff_department: {
-    type: Schema.Types.ObjectId,
-    ref:"Department"
-  },
-   middle_name: {
-     type: String,
-     trim: true,
-     maxlength:30
   },
   gender: {
     type: String,
@@ -87,11 +52,10 @@ const UserSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  resetLink: {
+  dob: {
     type: String,
-    default: '',
   },
-});
+}, baseOptions);
 
 UserSchema.pre('save', async function (next) {
   try {

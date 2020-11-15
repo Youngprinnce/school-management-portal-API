@@ -1,14 +1,14 @@
 const Session = require('../models/Session');
 const { sendSuccess, sendError } = require('../utils/responseHandler');
 
-const create = (req, res) => {
-  const {start, end, year} = req.body;
-  if (!start || !end || !year) {
-    const message = 'All field required';
-    return sendError(res, [], message);
+const create = async (req, res) => {
+   // VALIDATE USER BEFORE SAVE
+  const { error, value } = await Session.sessionValidations(req.body);
+  if (error) {
+    return sendError(res, error.details[0].message);
   }
 
-  Session.create({ start, end, year }, (err, data) => {
+  Session.create(...value, (err, data) => {
     if (err) {
       sendError(res, err);
     } else {

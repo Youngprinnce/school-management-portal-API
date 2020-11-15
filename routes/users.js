@@ -17,8 +17,8 @@ module.exports = () => {
   router.post('/register', register);
   router.put('/login', login);
   router.get('/activate', verify);
-  router.put('/forgot-password', forgotPassword);
-  router.put('/resetpassword/:token', resetPassword);
+  router.get('/forgot-password', forgotPassword);
+  router.put('/reset-password', resetPassword);
   router.delete('/users/:userId', checkLoggedIn, checkRole, deleteOne);
   router.get('/users/', checkLoggedIn, checkRole,  getAll);
   return router;
