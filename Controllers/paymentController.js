@@ -1,6 +1,5 @@
 const Payment = require("../models/Payment");
 const request = require("request");
-const Session = require("../models/Session");
 const {sendSuccess, sendError} = require("../utils/responseHandler")
 const secretKey = `Bearer ${process.env.PAYSTACK_KEY}`;
 

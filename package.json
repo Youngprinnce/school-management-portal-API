@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "node server.js"
   },
   "author": "youngprinnce <ajiboyeadedotun16@gmail.com> (htts://github.com/youngprinnce)",
   "license": "MIT",
@@ -25,5 +25,9 @@
     "eslint-plugin-prettier": "^3.1.4",
     "nodemon": "^2.0.4",
     "prettier": "^2.1.1"
+  },
+  "engines": {
+    "node": "12.18.3",
+    "npm": "6.14.8"
   }
 }
