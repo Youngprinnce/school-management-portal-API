@@ -20,6 +20,6 @@ const port = process.env.PORT || 3000;
 routes(app);
 
 // Start a TCP server listening for connections on the given port and host
-app.listen(port, hostname, () => {
+app.listen(port, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
