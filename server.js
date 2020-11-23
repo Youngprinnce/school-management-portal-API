@@ -13,8 +13,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Read the host address and the port from the environment
-const hostname = process.env.HOST;
-const port = process.env.PORT;
+const hostname = process.env.HOST || "localhost";
+const port = process.env.PORT || 3000;
 
 //Routes
 routes(app);
