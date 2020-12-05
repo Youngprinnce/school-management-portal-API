@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const dsn = process.env.MONGODB_URI || "mongodb://localhost:27017/schoolApi";
+const dsn = process.env.MONGODB_URI;
 
 const InitiateMongoServer = async () => {
   try {

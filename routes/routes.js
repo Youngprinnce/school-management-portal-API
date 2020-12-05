@@ -19,6 +19,10 @@ const routes = (app) => {
   app.use('/api/session', checkLoggedIn, checkRole,  sessions());
   app.use('/api/payment',  payments());
 
+  app.get("/", (req, res) => {
+    res.send("hello world")
+  })
+
   app.use((req,res,next)=>{
   	const error = new Error("Page Not found");
   	error.status = 404;
